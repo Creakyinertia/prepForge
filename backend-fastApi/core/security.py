@@ -2,7 +2,7 @@ import secrets
 from pwdlib import PasswordHash
 import hashlib
 from datetime import datetime, timezone, timedelta
-from jose import jwt
+import jwt
 from core.config import settings
 
 password_hash=PasswordHash.recommended()
@@ -19,25 +19,25 @@ def create_access_token(user_id: str)->str:
     ))
 
     payload = {
-        sub: user_id,
-        type: "access",
-        exp: expire
+        "sub": user_id,
+        "type": "access",
+        "exp": expire
     }
 
     return jwt.encode(
         payload,
         settings.SECRET_KEY,
-        algorhithm=settings.ALGORITHM
+        algorithm=settings.ALGORITHM
     )
 
 def decode_token(token:str):
     return jwt.decode(
         token,
         settings.SECRET_KEY,
-        algorhithms=[settings.ALGORITHM]
+        algorithms=[settings.ALGORITHM]
     )
 
-def generate_refresh_token()=>str:
+def generate_refresh_token()->str:
     return secrets.token_urlsafe(64)
 
 def hash_refresh_token(token:str)->str:

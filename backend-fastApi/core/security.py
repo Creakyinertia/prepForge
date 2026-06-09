@@ -17,10 +17,11 @@ def create_access_token(user_id: str)->str:
     expire = (datetime.now(timezone.utc)+timedelta(
         minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
     ))
-
+    iat = datetime.now(timezone.utc)
     payload = {
-        "sub": user_id,
+        "sub": str(user_id),
         "type": "access",
+        "iat": iat,
         "exp": expire
     }
 

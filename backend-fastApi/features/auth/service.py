@@ -59,8 +59,6 @@ class AuthService:
             expires_at=expires_at,
         )
         db.add(refresh_token)
-        db.commit()
-        db.refresh(refresh_token)
         return raw_token
     
     def refresh_access_token(
@@ -143,11 +141,12 @@ class AuthService:
             db,
             user.id
         )
+        db.commit()
 
         return {
             "access_token": access_token,
             "refresh_token": refresh_token,
-            "type": "bearer"
+            "token_type": "bearer"
         }
     
     def logout(

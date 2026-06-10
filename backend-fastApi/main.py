@@ -1,6 +1,9 @@
 from fastapi import FastAPI
 
 from features.auth.router import router as auth_router
+from features.roadmaps.router import (
+    router as roadmap_router
+)
 
 
 app = FastAPI(
@@ -12,6 +15,11 @@ app.include_router(
     auth_router,
     prefix="/auth",
     tags=["Auth"],
+)
+app.include_router(
+    roadmap_router,
+    prefix="/roadmaps",
+    tags=["Roadmaps"],
 )
 
 

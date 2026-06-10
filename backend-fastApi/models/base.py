@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import DateTime
+from sqlalchemy import DateTime, Boolean
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.sql import func
 from sqlalchemy.dialects.postgresql import UUID
@@ -23,4 +23,12 @@ class UUIDMixin:
         UUID(as_uuid=True),
         primary_key = True,
         default = uuid.uuid4
+    )
+
+class SoftDeleteMixin:
+    is_deleted: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
+        server_default="false",
+        nullable=False,
     )

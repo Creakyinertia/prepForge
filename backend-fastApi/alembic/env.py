@@ -7,6 +7,9 @@ from alembic import context
 from models.base import Base
 from models.user import User
 from models.refresh_token import RefreshToken
+from models.roadmap import Roadmap
+from models.topic import Topic
+from models.roadmap_topic import RoadmapTopic
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

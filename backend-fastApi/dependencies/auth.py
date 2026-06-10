@@ -5,8 +5,10 @@ from core.database import get_db
 from core.security import decode_token
 from models.user import User
 
+
+# must be changed to /auth/login when not using swagger.
 oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl="/auth/login"
+    tokenUrl="/auth/token"
 )
 
 def get_current_user(

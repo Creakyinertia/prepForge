@@ -109,7 +109,6 @@ def get_current_user(
     db: Session = Depends(get_db)
 ):
     token = credentials.credentials
-    print(token)
     
     token_hash = hash_token(
         token

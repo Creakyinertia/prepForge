@@ -38,6 +38,11 @@ class User(Base):
         "RefreshToken",
         back_populates="user"
     )
+    profile = relationship(
+        "UserProfile",
+        back_populates="user",
+        uselist=False
+    )
     
     
     
@@ -91,70 +96,68 @@ class RefreshToken(Base):
     
     
     
-# class UserProfile(Base):
-#     __tablename__ = "user_profile"
+class UserProfile(Base):
+    __tablename__ = "user_profile"
 
-#     id = Column(
-#         String(36),
-#         primary_key=True,
-#         default=lambda: str(uuid.uuid4())
-#     )
+    id = Column(
+        String(36),
+        primary_key=True,
+        default=lambda: str(uuid.uuid4())
+    )
 
-#     user_id = Column(
-#         String(36),
-#         ForeignKey("users.id", ondelete="CASCADE"),
-#         nullable=False,
-#     )
+    user_id = Column(
+        String(36),
+        ForeignKey("users.id", ondelete="CASCADE")
+    )
 
-#     first_name =  Column(
-#         String(255),
-#         nullable=False
-#     )
+    first_name =  Column(
+        String(255),
+        nullable=False
+    )
 
-#     last_name =  Column(
-#         String(255),
-#         nullable=False
-#     )
+    last_name =  Column(
+        String(255),
+        nullable=False
+    )
+    phone =  Column(
+        String(255),
+        nullable=False
+    )
 
-#     phone =  Column(
-#         String(255),
-#         nullable=False
-#     )
+    bio = Column(
+    Text,
+        nullable=True
+    )
 
-#     bio = Column(
-#     Text,
-#         nullable=True
-#     )
+    linkedin_url = Column(
+    String(255),
+    nullable=True
+    )
 
-#     linkedin_url = Column(
-#     String(255),
-#     nullable=True
-#     )
-
-#     github_url = Column(
-#         String(255),
-#         nullable=True
-#     )
+    github_url = Column(
+        String(255),
+        nullable=True
+    )
     
-#     resume_url = Column(
-#         String(500),
-#         nullable=True
-#     )
+    resume_url = Column(
+        String(500),
+        nullable=True
+    )
 
-#     created_at = Column(
-#         DateTime,
-#         default=datetime.utcnow,
-#         nullable=False
-#     )
+    created_at = Column(
+        DateTime,
+        default=datetime.utcnow,
+        nullable=False
+    )
 
-#     last_updated = Column(
-#         DateTime,
-#         default=datetime.utcnow,
-#         onupdate=datetime.utcnow,
-#         nullable=False
-#     )
+    last_updated = Column(
+        DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow,
+        nullable=False
+    )
 
-#     user_profile = relationship(
-#     "UserProfile",
-#         back_populates="user"
-#     )
+    user = relationship(
+        "User",
+        back_populates="profile"
+    )

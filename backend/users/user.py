@@ -138,67 +138,66 @@ def login(
 
 @router.post("/refresh")
 def refresh_tokens(
-    refresh_token: RefreshTokenRequest,
+    token: RefreshTokenRequest,
     db: Session = Depends(get_db)
 ):
     
-    print(refresh_token.refresh_token)
-    # payload = decode_refresh_token(
-    #     refresh_token
-    # )
+    payload = decode_refresh_token(
+        token.refresh_token
+    )
 
-    # token_hash = hash_token(
-    #     refresh_token
-    # )
+    token_hash = hash_token(
+        token.refresh_token
+    )
 
-    # db_token = (
-    #     db.query(RefreshToken)
-    #     .filter(
-    #         RefreshToken.token_hash == token_hash
-    #     )
-    #     .first()
-    # )
+    db_token = (
+        db.query(RefreshToken)
+        .filter(
+            RefreshToken.token_hash == token_hash
+        )
+        .first()
+    )
     
 
-    # if not db_token:
-    #     raise HTTPException(
-    #         status_code=401,
-    #         detail="Invalid refresh token"
-    #     )
+    if not db_token:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid refresh token"
+        )
     
 
 
-    # username = payload["sub"]
+    username = payload["sub"]
 
-    # access_token, access_expiry = create_access_token({"sub": username})
-    # refresh_token, access_expiry = (
-    #     create_refresh_token(
-    #         {"sub": username}
-    #     )
-    # )
+    access_token, access_expiry = create_access_token({"sub": username})
+    refresh_token, refresh_expiry = (
+        create_refresh_token(
+            {"sub": username}
+        )
+    )
 
-    # if db_token:
-    #     db_token.token_hash = hash_token(refresh_token)
-    #     db_token.expires_at = access_expiry
-    # else:
-    #     db.add(
-    #         RefreshToken(
-    #             user_id=db_token.id,
-    #             token_hash=hash_token(refresh_token),
-    #             expires_at=access_expiry
-    #         )
-    #     )
+    if db_token:
+        db_token.token_hash = hash_token(refresh_token)
+        db_token.expires_at = access_expiry
+    else:
+        db.add(
+            RefreshToken(
+                user_id=db_token.id,
+                token_hash=hash_token(refresh_token),
+                expires_at=access_expiry
+            )
+        )
 
-    # db.commit()
+    db.commit()
 
-    # return {
-    #     "access_token":access_token,
-    #     "refresh_token": refresh_token,
-    #     "token_type": "bearer",
-    #     "access_expires_at":access_expiry.isoformat(),
-    #     "refresh_expires_at": refresh_expiry.isoformat()
-    # }
-    return {}
+    return {
+        "access_token":access_token,
+        "refresh_token": refresh_token,
+        "token_type": "bearer",
+        "access_expires_at":access_expiry.isoformat(),
+        "refresh_expires_at": refresh_expiry.isoformat()
+    }
+    
 
 @router.delete("/logout")
 def logout(
@@ -227,15 +226,3 @@ def logout(
     return {
         "message": "Logged out successfully"
     }
-
-# @router.get("/profile", tags=["User"])
-# def profile(
-#     current_user: str = Depends(
-#         get_current_user
-#     )
-# ):
-#     print(current_user)
-#     return {
-#         "message": "Authorized",
-#         "user": current_user
-#     }

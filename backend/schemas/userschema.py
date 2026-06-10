@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field, model_validator
 from typing import Optional
+from enum import Enum
 
 
 class UserRegister(BaseModel):
@@ -26,9 +27,22 @@ class RefreshTokenRequest(BaseModel):
     
 
 
+
+
+
+
+class CountryCode(str, Enum):
+    INDIA = "+91"
+    USA = "+1"
+    UK = "+44"
+    UAE = "+971"
+    AUSTRALIA = "+61"
+
+
 class UserProfileCreate(BaseModel):
     first_name: str
     last_name: str
+    country_code: str = Field(pattern=r"^\+\d{1,4}$")
     phone: str
     bio: Optional[str] = None
     linkedin_url: Optional[str] = None

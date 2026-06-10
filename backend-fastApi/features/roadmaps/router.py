@@ -6,6 +6,7 @@ from features.roadmaps.schema import (
     CreateRoadmapRequest,
     RoadmapResponse,
 )
+from features.roadmaps.schema import AddTopicToRoadmapRequest
 from features.roadmaps.service import (
     RoadmapService,
 )
@@ -61,3 +62,18 @@ def get_roadmap(
         )
 
     return roadmap
+
+@router.post(
+    "/{roadmap_id}/topics",
+)
+def add_topic_to_roadmap(
+    roadmap_id: UUID,
+    payload: AddTopicToRoadmapRequest,
+    db: Session = Depends(get_db),
+):
+    return roadmap_service.add_topic_to_roadmap(
+        db,
+        roadmap_id,
+        payload.topic_id,
+        payload.order_index,
+    )

@@ -1,6 +1,7 @@
 from sqlalchemy import Boolean, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from models.base import Base, TimestampMixin, UUIDMixin, SoftDeleteMixin
+from models.roadmap_topic import RoadmapTopic
 
 class Roadmap(Base, TimestampMixin, UUIDMixin, SoftDeleteMixin):
     __tablename__ = "roadmaps"

@@ -1,2 +1,11 @@
 venv
 .env
+
+# Alembic migrations
+alembic/versions/
+alembic.ini
+script.py.mako
+
+# Python cache files
+__pycache__/
+*.pyc

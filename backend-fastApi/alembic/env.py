@@ -8,6 +8,7 @@ from models.base import Base
 from models.user import User
 from models.refresh_token import RefreshToken
 from models.roadmap import Roadmap
+from models.topic_progress import TopicProgress
 from models.topic import Topic
 from models.roadmap_topic import RoadmapTopic
 

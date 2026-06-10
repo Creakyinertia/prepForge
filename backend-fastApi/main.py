@@ -7,6 +7,9 @@ from features.roadmaps.router import (
 from features.topics.router import (
     router as topic_router
 )
+from features.progress.router import (
+    router as progress_router
+)
 
 app = FastAPI(
     title="PrepForge API",
@@ -28,14 +31,11 @@ app.include_router(
     prefix="/topics",
     tags=["topics"],
 )
-
-
-@app.get("/")
-def root():
-    return {
-        "message": "PrepForge API is running"
-    }
-
+app.include_router(
+    progress_router,
+    prefix="/progress",
+    tags=["Progress"],
+)
 
 @app.get("/health")
 def health_check():

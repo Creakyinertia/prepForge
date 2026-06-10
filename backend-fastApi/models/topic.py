@@ -25,3 +25,9 @@ class Topic(Base, TimestampMixin, UUIDMixin, SoftDeleteMixin):
         cascade="all, delete-orphan",
         lazy="selectin"
     )
+
+    progress = relationship(
+        "TopicProgress",
+        back_populates="topic",
+        cascade="all, delete-orphan",
+    )

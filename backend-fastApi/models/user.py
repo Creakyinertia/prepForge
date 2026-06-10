@@ -33,3 +33,8 @@ class User(Base, TimestampMixin, UUIDMixin):
         back_populates="user",
         cascade="all, delete-orphan"
     )
+    progress = relationship(
+        "TopicProgress",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )

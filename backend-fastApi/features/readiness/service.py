@@ -5,6 +5,7 @@ from uuid import UUID
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
+from core.exceptions import NotFoundError
 from models.enums import (
     TopicProgressStatus,
     QuestionStatus,
@@ -36,7 +37,7 @@ class ReadinessService:
         )
 
         if not topic:
-            raise ValueError(
+            raise NotFoundError(
                 "Topic not found",
             )
 
@@ -147,7 +148,7 @@ class ReadinessService:
         )
 
         if not roadmap:
-            raise ValueError(
+            raise NotFoundError(
                 "Roadmap not found"
             )
 

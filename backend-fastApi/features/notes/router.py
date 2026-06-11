@@ -1,7 +1,12 @@
 from uuid import UUID
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from core.database import get_db
+from core.exceptions import (
+    AppError,
+    NotFoundError,
+    to_http_exception,
+)
 from dependencies.auth import (
     get_current_user,
 )
@@ -37,11 +42,8 @@ def upsert_note(
             payload.content,
         )
 
-    except ValueError:
-        raise HTTPException(
-            status_code=404,
-            detail="Topic not found",
-        )
+    except AppError as exc:
+        raise to_http_exception(exc) from exc
 
 
 @router.get(
@@ -62,9 +64,8 @@ def get_note(
     )
 
     if not note:
-        raise HTTPException(
-            status_code=404,
-            detail="Note not found",
+        raise to_http_exception(
+            NotFoundError("Note not found")
         )
 
     return note

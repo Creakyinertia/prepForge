@@ -2,6 +2,7 @@ from uuid import UUID
 
 from sqlalchemy.orm import Session
 
+from core.exceptions import NotFoundError
 from models.question import Question
 from models.topic import Topic
 
@@ -22,7 +23,7 @@ class QuestionService:
         )
 
         if not topic:
-            raise ValueError(
+            raise NotFoundError(
                 "Topic not found",
             )
 
@@ -81,7 +82,7 @@ class QuestionService:
         )
 
         if not question:
-            raise ValueError(
+            raise NotFoundError(
                 "Question not found",
             )
 
@@ -106,7 +107,7 @@ class QuestionService:
         )
 
         if not question:
-            raise ValueError(
+            raise NotFoundError(
                 "Question not found",
             )
 

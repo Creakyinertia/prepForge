@@ -2,6 +2,7 @@ from uuid import UUID
 
 from sqlalchemy.orm import Session
 
+from core.exceptions import NotFoundError
 from models.question import Question
 from models.question_progress import (
     QuestionProgress,
@@ -27,7 +28,7 @@ class QuestionProgressService:
         )
 
         if not question:
-            raise ValueError(
+            raise NotFoundError(
                 "Question not found",
             )
 

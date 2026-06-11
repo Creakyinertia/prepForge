@@ -5,8 +5,12 @@ from datetime import datetime, timedelta, timezone
 from core.security import hash_password, generate_refresh_token, hash_refresh_token, create_access_token, verify_password
 from models.user import User
 from core.config import settings
+from core.exceptions import (
+    AuthenticationError,
+    InvalidRefreshTokenError,
+    UserAlreadyExistsError,
+)
 from models.refresh_token import RefreshToken
-from core.exceptions import AuthenticationError
 
 class AuthService:
     def register(
@@ -27,7 +31,7 @@ class AuthService:
             .first()
         )
         if existing_user:
-            raise AuthenticationError()
+            raise UserAlreadyExistsError()
         user = User(
             username=username,
             email=email,

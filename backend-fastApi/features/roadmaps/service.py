@@ -1,9 +1,11 @@
 from uuid import UUID
 from sqlalchemy import func
 from sqlalchemy.orm import Session
+from core.exceptions import NotFoundError
 from models.enums import TopicProgressStatus
 from models.roadmap import Roadmap
 from models.roadmap_topic import RoadmapTopic
+from models.topic import Topic
 from models.topic_progress import TopicProgress
 
 class RoadmapService:
@@ -67,7 +69,7 @@ class RoadmapService:
         )
 
         if not roadmap:
-            raise ValueError(
+            raise NotFoundError(
                 "Roadmap not found"
             )
         
@@ -77,7 +79,7 @@ class RoadmapService:
         )
 
         if not topic:
-            raise ValueError(
+            raise NotFoundError(
                 "Topic not found"
             )
 
@@ -107,7 +109,7 @@ class RoadmapService:
         )
 
         if not roadmap:
-            raise ValueError(
+            raise NotFoundError(
                 "Roadmap not found"
             )
 

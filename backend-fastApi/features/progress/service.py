@@ -1,5 +1,6 @@
 from uuid import UUID
 from sqlalchemy.orm import Session
+from core.exceptions import NotFoundError
 from features.revisions.service import RevisionService
 from models.enums import (
     TopicProgressStatus,
@@ -28,7 +29,7 @@ class ProgressService:
         )
 
         if not topic:
-            raise ValueError(
+            raise NotFoundError(
                 "Topic not found"
             )
 

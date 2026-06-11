@@ -1,5 +1,6 @@
 from uuid import UUID
 from sqlalchemy.orm import Session
+from core.exceptions import NotFoundError
 from models.note import Note
 from models.topic import Topic
 
@@ -18,7 +19,7 @@ class NoteService:
         )
 
         if not topic:
-            raise ValueError(
+            raise NotFoundError(
                 "Topic not found",
             )
 

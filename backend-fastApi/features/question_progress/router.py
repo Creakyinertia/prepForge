@@ -2,10 +2,13 @@ from uuid import UUID
 
 from fastapi import APIRouter
 from fastapi import Depends
-from fastapi import HTTPException
 
 from sqlalchemy.orm import Session
 
+from core.exceptions import (
+    AppError,
+    to_http_exception,
+)
 from core.database import get_db
 
 from dependencies.auth import (
@@ -51,8 +54,5 @@ def update_question_progress(
             payload.status,
         )
 
-    except ValueError:
-        raise HTTPException(
-            status_code=404,
-            detail="Question not found",
-        )
+    except AppError as exc:
+        raise to_http_exception(exc) from exc

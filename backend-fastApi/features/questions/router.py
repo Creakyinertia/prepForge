@@ -2,11 +2,15 @@ from uuid import UUID
 
 from fastapi import APIRouter
 from fastapi import Depends
-from fastapi import HTTPException
 
 from sqlalchemy.orm import Session
 from dependencies.admin import get_current_admin
 
+from core.exceptions import (
+    AppError,
+    NotFoundError,
+    to_http_exception,
+)
 from core.database import get_db
 
 from features.questions.schema import (
@@ -45,11 +49,8 @@ def create_question(
             payload.difficulty,
         )
 
-    except ValueError:
-        raise HTTPException(
-            status_code=404,
-            detail="Topic not found",
-        )
+    except AppError as exc:
+        raise to_http_exception(exc) from exc
 
 
 @router.get(
@@ -66,9 +67,8 @@ def get_question(
     )
 
     if not question:
-        raise HTTPException(
-            status_code=404,
-            detail="Question not found",
+        raise to_http_exception(
+            NotFoundError("Question not found")
         )
 
     return question
@@ -109,11 +109,8 @@ def update_question(
             payload.difficulty,
         )
 
-    except ValueError:
-        raise HTTPException(
-            status_code=404,
-            detail="Question not found",
-        )
+    except AppError as exc:
+        raise to_http_exception(exc) from exc
 
 
 @router.delete(
@@ -133,8 +130,5 @@ def delete_question(
             "message": "Question deleted"
         }
 
-    except ValueError:
-        raise HTTPException(
-            status_code=404,
-            detail="Question not found",
-        )
+    except AppError as exc:
+        raise to_http_exception(exc) from exc

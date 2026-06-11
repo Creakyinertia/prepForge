@@ -1,7 +1,11 @@
 from uuid import UUID
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from core.database import get_db
+from core.exceptions import (
+    AppError,
+    to_http_exception,
+)
 from dependencies.auth import (
     get_current_user,
 )
@@ -49,8 +53,5 @@ def complete_revision(
             revision_id,
             current_user.id,
         )
-    except ValueError:
-        raise HTTPException(
-            status_code=404,
-            detail="Revision not found",
-        )
+    except AppError as exc:
+        raise to_http_exception(exc) from exc

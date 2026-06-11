@@ -6,6 +6,7 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 
 from core.database import get_db
+from core.exceptions import AppError, to_http_exception
 
 from dependencies.auth import (
     get_current_user,
@@ -30,9 +31,12 @@ def update_progress(
     ),
     db: Session = Depends(get_db),
 ):
-    return progress_service.update_progress(
-        db,
-        current_user.id,
-        topic_id,
-        payload.status,
-    )
+    try:
+        return progress_service.update_progress(
+            db,
+            current_user.id,
+            topic_id,
+            payload.status,
+        )
+    except AppError as exc:
+        raise to_http_exception(exc) from exc

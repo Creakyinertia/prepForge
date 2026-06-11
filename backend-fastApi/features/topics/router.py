@@ -1,7 +1,12 @@
 from uuid import UUID
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from core.database import get_db
+from core.exceptions import (
+    AppError,
+    NotFoundError,
+    to_http_exception,
+)
 from features.topics.schema import (
     CreateTopicRequest,
     UpdateTopicRequest,
@@ -27,11 +32,15 @@ def create_topic(
     payload: CreateTopicRequest,
     db: Session = Depends(get_db),
 ):
-    return topic_service.create_topic(
-        db,
-        payload.title,
-        payload.description,
-    )
+    try:
+        return topic_service.create_topic(
+            db,
+            payload.title,
+            payload.description,
+            payload.content,
+        )
+    except AppError as exc:
+        raise to_http_exception(exc) from exc
 
 @router.get(
     "",
@@ -60,9 +69,8 @@ def get_topic(
     )
 
     if not topic:
-        raise HTTPException(
-            status_code=404,
-            detail="Topic not found",
+        raise to_http_exception(
+            NotFoundError("Topic not found")
         )
 
     return topic
@@ -88,8 +96,5 @@ def update_topic(
             payload.content,
         )
 
-    except ValueError:
-        raise HTTPException(
-            status_code=404,
-            detail="Topic not found",
-        )
+    except AppError as exc:
+        raise to_http_exception(exc) from exc

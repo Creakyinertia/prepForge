@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 from uuid import UUID
 from sqlalchemy.orm import Session
+from core.exceptions import NotFoundError
 from core.revision_scheduler import (
     calculate_next_revision_date,
 )
@@ -78,7 +79,7 @@ class RevisionService:
         )
 
         if not revision:
-            raise ValueError(
+            raise NotFoundError(
                 "Revision not found",
             )
 

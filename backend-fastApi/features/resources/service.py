@@ -2,6 +2,7 @@ from uuid import UUID
 
 from sqlalchemy.orm import Session
 
+from core.exceptions import NotFoundError
 from models.resource import Resource
 from models.topic import Topic
 
@@ -22,7 +23,7 @@ class ResourceService:
         )
 
         if not topic:
-            raise ValueError(
+            raise NotFoundError(
                 "Topic not found",
             )
 

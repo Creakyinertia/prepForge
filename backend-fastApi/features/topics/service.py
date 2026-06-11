@@ -1,5 +1,9 @@
 from sqlalchemy.orm import Session
 from uuid import UUID
+from core.exceptions import (
+    ConflictError,
+    NotFoundError,
+)
 from models.topic import Topic
 from core.utils import generate_slug
 
@@ -21,7 +25,7 @@ class TopicService:
         )
 
         if existing:
-            raise ValueError(
+            raise ConflictError(
                 "Topic already exists"
             )
 
@@ -54,7 +58,7 @@ class TopicService:
         )
     
         if not topic:
-            raise ValueError(
+            raise NotFoundError(
                 "Topic not found"
             )
     

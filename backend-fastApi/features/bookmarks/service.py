@@ -2,6 +2,7 @@ from uuid import UUID
 
 from sqlalchemy.orm import Session
 
+from core.exceptions import NotFoundError
 from models.bookmarked_topic import (
     BookmarkedTopic,
 )
@@ -22,7 +23,7 @@ class BookmarkService:
         )
 
         if not topic:
-            raise ValueError(
+            raise NotFoundError(
                 "Topic not found",
             )
 
@@ -79,7 +80,7 @@ class BookmarkService:
         )
 
         if not bookmark:
-            raise ValueError(
+            raise NotFoundError(
                 "Bookmark not found",
             )
 

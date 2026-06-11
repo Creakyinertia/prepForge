@@ -29,4 +29,6 @@ class RoadmapReadinessResponse(
 
     total_topics: int
 
-    average_readiness_score: float
+    completed_topics: int
+
+    readiness_score: float

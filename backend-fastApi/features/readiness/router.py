@@ -2,10 +2,13 @@ from uuid import UUID
 
 from fastapi import APIRouter
 from fastapi import Depends
-from fastapi import HTTPException
 
 from sqlalchemy.orm import Session
 
+from core.exceptions import (
+    AppError,
+    to_http_exception,
+)
 from core.database import get_db
 
 from dependencies.auth import (
@@ -47,11 +50,8 @@ def get_topic_readiness(
             topic_id,
         )
 
-    except ValueError:
-        raise HTTPException(
-            status_code=404,
-            detail="Topic not found",
-        )
+    except AppError as exc:
+        raise to_http_exception(exc) from exc
 
 @router.get(
     "/roadmaps/{roadmap_id}",
@@ -75,11 +75,8 @@ def get_roadmap_readiness(
             )
         )
 
-    except ValueError:
-        raise HTTPException(
-            status_code=404,
-            detail="Roadmap not found",
-        )
+    except AppError as exc:
+        raise to_http_exception(exc) from exc
 
 @router.get(
     "/roadmaps",

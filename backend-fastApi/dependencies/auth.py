@@ -1,7 +1,11 @@
 from fastapi.security import OAuth2PasswordBearer
-from fastapi import Depends, HTTPException
+from fastapi import Depends
 from sqlalchemy.orm import Session
 from core.database import get_db
+from core.exceptions import (
+    AuthenticationError,
+    to_http_exception,
+)
 from core.security import decode_token
 from models.user import User
 
@@ -17,24 +21,21 @@ def get_current_user(
 ):
     try:
         payload=decode_token(token)
-        user_id=payload.get("sub")
-        if not user_id:
-            raise HTTPException(
-                status_code=401,
-                detail="Invalid token"
-            )
+    except Exception as exc:
+        raise to_http_exception(
+            AuthenticationError("Invalid token")
+        ) from exc
 
-        user = db.get(User, user_id)
-        if not user:
-           raise HTTPException(
-               status_code=401,
-               detail="User not found",
-           )
-
-        return user
-
-    except Exception:
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid token",
+    user_id = payload.get("sub")
+    if not user_id:
+        raise to_http_exception(
+            AuthenticationError("Invalid token")
         )
+
+    user = db.get(User, user_id)
+    if not user:
+       raise to_http_exception(
+           AuthenticationError("User not found")
+       )
+
+    return user

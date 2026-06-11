@@ -38,3 +38,8 @@ class User(Base, TimestampMixin, UUIDMixin):
         back_populates="user",
         cascade="all, delete-orphan",
     )
+    revisions = relationship(
+        "Revision",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )

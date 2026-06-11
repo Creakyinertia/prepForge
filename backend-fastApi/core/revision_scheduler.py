@@ -8,15 +8,17 @@ REVISION_INTERVALS = [
     30,
 ]
 
-def calculate_next_due_date(
+def calculate_next_revision_date(
     revision_count: int,
     current_date: datetime,
-):
+) -> datetime:
     index = min(
         revision_count,
         len(REVISION_INTERVALS) - 1,
     )
 
+    days = REVISION_INTERVALS[index]
+
     return current_date + timedelta(
-        days=REVISION_INTERVALS[index]
+        days=days,
     )

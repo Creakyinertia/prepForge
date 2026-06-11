@@ -1,15 +1,7 @@
 from datetime import datetime
 from uuid import UUID
-
-from sqlalchemy import DateTime
-from sqlalchemy import ForeignKey
-from sqlalchemy import Integer
-from sqlalchemy import UniqueConstraint
-
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import relationship
-
+from sqlalchemy import DateTime, ForeignKey, Integer, Index, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from models.base import (
     Base,
     UUIDMixin,
@@ -53,14 +45,25 @@ class Revision(
         default=0,
     )
 
+    user = relationship(
+        "User",
+        back_populates="revisions",
+    )
+
+    topic = relationship(
+        "Topic",
+        back_populates="revisions",
+    )
+
     __table_args__ = (
         UniqueConstraint(
             "user_id",
             "topic_id",
-            name="uq_user_topic_revision",
+            name="uq_revision_user_topic",
+        ),
+        Index(
+            "ix_revision_user_due",
+            "user_id",
+            "due_at",
         ),
     )
-
-    user = relationship("User")
-
-    topic = relationship("Topic")

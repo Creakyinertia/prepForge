@@ -10,6 +10,9 @@ from features.topics.router import (
 from features.progress.router import (
     router as progress_router
 )
+from features.revisions.router import (
+    router as revision_router,
+)
 
 app = FastAPI(
     title="PrepForge API",
@@ -35,6 +38,11 @@ app.include_router(
     progress_router,
     prefix="/progress",
     tags=["Progress"],
+)
+app.include_router(
+    revision_router,
+    prefix="/revisions",
+    tags=["Revisions"],
 )
 
 @app.get("/health")

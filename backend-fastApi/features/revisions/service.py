@@ -1,22 +1,19 @@
-from datetime import datetime
-from datetime import timezone
-
+from datetime import datetime, timezone
+from uuid import UUID
 from sqlalchemy.orm import Session
-
+from core.revision_scheduler import (
+    calculate_next_revision_date,
+)
 from models.revision import Revision
 
-from core.revision_scheduler import (
-    calculate_next_due_date,
-)
-
 class RevisionService:
-    def create_revision(
+    def schedule_first_revision(
         self,
         db: Session,
-        user_id,
-        topic_id,
+        user_id: UUID,
+        topic_id: UUID,
     ):
-        existing = (
+        existing_revision = (
             db.query(Revision)
             .filter(
                 Revision.user_id == user_id,
@@ -24,39 +21,43 @@ class RevisionService:
             )
             .first()
         )
-        if existing:
-            return existing
+
+        if existing_revision:
+            return existing_revision
+
+        now = datetime.now(
+            timezone.utc,
+        )
+
         revision = Revision(
             user_id=user_id,
             topic_id=topic_id,
-            due_at=calculate_next_due_date(
+            due_at=calculate_next_revision_date(
                 0,
-                datetime.now(timezone.utc),
+                now,
             ),
             revision_count=0,
         )
         db.add(revision)
-
-        db.commit()
-
-        db.refresh(revision)
 
         return revision
 
     def get_due_revisions(
         self,
         db: Session,
-        user_id,
+        user_id: UUID,
     ):
+        now = datetime.now(
+            timezone.utc,
+        )
         return (
             db.query(Revision)
             .filter(
                 Revision.user_id == user_id,
-                Revision.due_at
-                <= datetime.now(timezone.utc),
+                Revision.due_at <= now,
             )
             .order_by(
-                Revision.due_at.asc()
+                Revision.due_at.asc(),
             )
             .all()
         )
@@ -64,25 +65,30 @@ class RevisionService:
     def complete_revision(
         self,
         db: Session,
-        revision_id,
+        revision_id: UUID,
+        user_id: UUID,
     ):
-        revision = db.get(
-            Revision,
-            revision_id,
+        revision = (
+            db.query(Revision)
+            .filter(
+                Revision.id == revision_id,
+                Revision.user_id == user_id,
+            )
+            .first()
         )
+
         if not revision:
             raise ValueError(
-                "Revision not found"
+                "Revision not found",
             )
-            revision.revision_count += 1
-            revision.due_at = (
-            calculate_next_due_date(
-                revision.revision_count,
-                datetime.now(timezone.utc),
-            )
+
+        revision.revision_count += 1
+
+        revision.due_at = calculate_next_revision_date(
+            revision.revision_count,
+            datetime.now(timezone.utc),
         )
         db.commit()
-        
         db.refresh(revision)
-        
+
         return revision

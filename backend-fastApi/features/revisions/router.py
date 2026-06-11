@@ -1,23 +1,17 @@
 from uuid import UUID
-
-from fastapi import APIRouter
-from fastapi import Depends
-
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-
 from core.database import get_db
-
-from dependencies.auth import get_current_user
-
-from models.user import User
-
-from features.revisions.schemas import (
+from dependencies.auth import (
+    get_current_user,
+)
+from features.revisions.schema import (
     RevisionResponse,
 )
-
 from features.revisions.service import (
     RevisionService,
 )
+from models.user import User
 
 router = APIRouter()
 
@@ -29,7 +23,7 @@ revision_service = RevisionService()
 )
 def get_due_revisions(
     current_user: User = Depends(
-        get_current_user
+        get_current_user,
     ),
     db: Session = Depends(get_db),
 ):
@@ -44,9 +38,19 @@ def get_due_revisions(
 )
 def complete_revision(
     revision_id: UUID,
+    current_user: User = Depends(
+        get_current_user,
+    ),
     db: Session = Depends(get_db),
 ):
-    return revision_service.complete_revision(
-        db,
-        revision_id,
-    )
+    try:
+        return revision_service.complete_revision(
+            db,
+            revision_id,
+            current_user.id,
+        )
+    except ValueError:
+        raise HTTPException(
+            status_code=404,
+            detail="Revision not found",
+        )

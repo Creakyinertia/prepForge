@@ -31,3 +31,8 @@ class Topic(Base, TimestampMixin, UUIDMixin, SoftDeleteMixin):
         back_populates="topic",
         cascade="all, delete-orphan",
     )
+    revisions = relationship(
+        "Revision",
+        back_populates="topic",
+        cascade="all, delete-orphan",
+    )

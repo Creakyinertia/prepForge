@@ -1,18 +1,20 @@
 from uuid import UUID
-
 from sqlalchemy.orm import Session
-
+from features.revisions.service import RevisionService
+from models.enums import (
+    TopicProgressStatus,
+)
 from models.topic import Topic
-
 from models.topic_progress import (
     TopicProgress,
 )
 
-from models.enums import (
-    TopicProgressStatus,
-)
 
 class ProgressService:
+
+    def __init__(self):
+        self.revision_service = RevisionService()
+
     def update_progress(
         self,
         db: Session,
@@ -24,12 +26,12 @@ class ProgressService:
             Topic,
             topic_id,
         )
-    
+
         if not topic:
             raise ValueError(
                 "Topic not found"
             )
-    
+
         progress = (
             db.query(TopicProgress)
             .filter(
@@ -38,20 +40,33 @@ class ProgressService:
             )
             .first()
         )
-    
+
+        previous_status = None
+
         if not progress:
             progress = TopicProgress(
                 user_id=user_id,
                 topic_id=topic_id,
                 status=status,
             )
-    
+
             db.add(progress)
+
         else:
+            previous_status = progress.status
             progress.status = status
-    
+
+        if (
+            status == TopicProgressStatus.COMPLETED
+            and previous_status
+            != TopicProgressStatus.COMPLETED
+        ):
+            self.revision_service.schedule_first_revision(
+                db,
+                user_id,
+                topic_id,
+            )
         db.commit()
-    
         db.refresh(progress)
-    
+
         return progress

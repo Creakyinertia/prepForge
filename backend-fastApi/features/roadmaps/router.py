@@ -10,6 +10,7 @@ from features.roadmaps.schema import AddTopicToRoadmapRequest, RoadmapProgressRe
 from features.roadmaps.service import (
     RoadmapService,
 )
+from dependencies.admin import get_current_admin
 from dependencies.auth import (
     get_current_user,
 )
@@ -22,6 +23,9 @@ roadmap_service = RoadmapService()
 @router.post(
     "",
     response_model=RoadmapResponse,
+    dependencies=[
+        Depends(get_current_admin)
+    ],
 )
 def create_roadmap(
     payload: CreateRoadmapRequest,
@@ -69,10 +73,14 @@ def get_roadmap(
 
 @router.post(
     "/{roadmap_id}/topics",
+    dependencies=[
+        Depends(get_current_admin)
+    ],
 )
 def add_topic_to_roadmap(
     roadmap_id: UUID,
     payload: AddTopicToRoadmapRequest,
+    
     db: Session = Depends(get_db),
 ):
     return roadmap_service.add_topic_to_roadmap(

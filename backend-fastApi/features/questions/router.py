@@ -5,6 +5,7 @@ from fastapi import Depends
 from fastapi import HTTPException
 
 from sqlalchemy.orm import Session
+from dependencies.admin import get_current_admin
 
 from core.database import get_db
 
@@ -27,6 +28,9 @@ question_service = QuestionService()
 @router.post(
     "",
     response_model=QuestionResponse,
+    dependencies=[
+        Depends(get_current_admin)
+    ],
 )
 def create_question(
     payload: CreateQuestionRequest,
@@ -87,6 +91,9 @@ def get_topic_questions(
 @router.put(
     "/{question_id}",
     response_model=QuestionResponse,
+    dependencies=[
+        Depends(get_current_admin)
+    ],
 )
 def update_question(
     question_id: UUID,

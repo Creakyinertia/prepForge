@@ -28,6 +28,12 @@ class User(Base, TimestampMixin, UUIDMixin):
         Boolean,
         default=False
     )
+    is_admin: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
+        server_default="false",
+        nullable=False,
+    )
     refresh_tokens=relationship(
         "RefreshToken",
         back_populates="user",

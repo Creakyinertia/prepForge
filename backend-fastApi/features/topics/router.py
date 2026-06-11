@@ -6,6 +6,7 @@ from features.topics.schema import (
     CreateTopicRequest,
     TopicResponse,
 )
+from dependencies.admin import get_current_admin
 from features.topics.service import (
     TopicService,
 )
@@ -17,6 +18,9 @@ topic_service = TopicService()
 @router.post(
     "",
     response_model=TopicResponse,
+    dependencies=[
+        Depends(get_current_admin)
+    ],
 )
 def create_topic(
     payload: CreateTopicRequest,

@@ -201,6 +201,7 @@ Each user has a unique progress state for every topic.
 This project is intentionally designed to demonstrate:
 
 * Backend Engineering
+* Frontend Engineering
 * System Design
 * API Design
 * Database Design
@@ -221,8 +222,8 @@ Current Phase:
 * Roadmaps ✅
 * Topics ✅
 * Progress Tracking ✅
-* Revision Scheduler 🚧
-* Notes ⏳
+* Revision Scheduler ✅
+* Notes 🚧
 * AI Coach ⏳
 
 ---

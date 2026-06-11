@@ -13,6 +13,9 @@ from features.progress.router import (
 from features.revisions.router import (
     router as revision_router,
 )
+from features.notes.router import (
+    router as note_router,
+)
 
 app = FastAPI(
     title="PrepForge API",
@@ -43,6 +46,11 @@ app.include_router(
     revision_router,
     prefix="/revisions",
     tags=["Revisions"],
+)
+app.include_router(
+    note_router,
+    prefix="/notes",
+    tags=["Notes"],
 )
 
 @app.get("/health")

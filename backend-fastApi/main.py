@@ -34,6 +34,12 @@ from features.readiness.router import (
 from features.search.router import (
     router as search_router,
 )
+from features.bookmarks.router import (
+    router as bookmark_router,
+)
+from features.home.router import (
+    router as home_router,
+)
 
 app = FastAPI(
     title="PrepForge API",
@@ -99,6 +105,16 @@ app.include_router(
     search_router,
     prefix="/search",
     tags=["Search"],
+)
+app.include_router(
+    bookmark_router,
+    prefix="/bookmarks",
+    tags=["Bookmarks"],
+)
+app.include_router(
+    home_router,
+    prefix="/home",
+    tags=["Home"],
 )
 
 @app.get("/health")

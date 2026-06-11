@@ -59,3 +59,8 @@ class User(Base, TimestampMixin, UUIDMixin):
         back_populates="user",
         cascade="all, delete-orphan",
     )
+    bookmarked_topics = relationship(
+        "BookmarkedTopic",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )

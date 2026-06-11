@@ -18,6 +18,10 @@ class Topic(Base, TimestampMixin, UUIDMixin, SoftDeleteMixin):
         Text,
         nullable=True
     )
+    content: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True,
+    )
 
     roadmaps = relationship(
         "RoadmapTopic",
@@ -48,6 +52,11 @@ class Topic(Base, TimestampMixin, UUIDMixin, SoftDeleteMixin):
     )
     questions = relationship(
         "Question",
+        back_populates="topic",
+        cascade="all, delete-orphan",
+    )
+    bookmarked_by = relationship(
+        "BookmarkedTopic",
         back_populates="topic",
         cascade="all, delete-orphan",
     )

@@ -16,6 +16,7 @@ from models.note import Note
 from models.resource import Resource
 from models.question import Question
 from models.question_progress import QuestionProgress
+from models.bookmarked_topic import BookmarkedTopic
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

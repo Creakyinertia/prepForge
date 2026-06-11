@@ -19,3 +19,14 @@ class TopicReadinessResponse(
     due_revisions: int
 
     readiness_score: float
+
+class RoadmapReadinessResponse(
+    BaseModel
+):
+    roadmap_id: UUID
+
+    roadmap_title: str
+
+    total_topics: int
+
+    average_readiness_score: float

@@ -10,6 +10,7 @@ class TopicService:
         db: Session,
         title: str,
         description: str | None,
+        content: str | None,
     ):
         slug = generate_slug(title)
 
@@ -28,6 +29,7 @@ class TopicService:
             title=title,
             slug=slug,
             description=description,
+            content=content,
         )
 
         db.add(topic)
@@ -36,6 +38,34 @@ class TopicService:
 
         db.refresh(topic)
 
+        return topic
+
+    def update_topic(
+        self,
+        db: Session,
+        topic_id: UUID,
+        title: str,
+        description: str | None,
+        content: str | None,
+    ):
+        topic = db.get(
+            Topic,
+            topic_id,
+        )
+    
+        if not topic:
+            raise ValueError(
+                "Topic not found"
+            )
+    
+        topic.title = title
+        topic.description = description
+        topic.content = content
+    
+        db.commit()
+    
+        db.refresh(topic)
+    
         return topic
 
     def get_topics(

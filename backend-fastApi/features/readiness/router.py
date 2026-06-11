@@ -14,6 +14,7 @@ from dependencies.auth import (
 
 from features.readiness.schema import (
     TopicReadinessResponse,
+    RoadmapReadinessResponse,
 )
 
 from features.readiness.service import (
@@ -51,3 +52,49 @@ def get_topic_readiness(
             status_code=404,
             detail="Topic not found",
         )
+
+@router.get(
+    "/roadmaps/{roadmap_id}",
+    response_model=RoadmapReadinessResponse,
+)
+def get_roadmap_readiness(
+    roadmap_id: UUID,
+    current_user: User = Depends(
+        get_current_user,
+    ),
+    db: Session = Depends(
+        get_db
+    ),
+):
+    try:
+        return (
+            readiness_service.get_roadmap_readiness(
+                db,
+                current_user.id,
+                roadmap_id,
+            )
+        )
+
+    except ValueError:
+        raise HTTPException(
+            status_code=404,
+            detail="Roadmap not found",
+        )
+
+@router.get(
+    "/roadmaps",
+)
+def get_all_roadmap_readiness(
+    current_user: User = Depends(
+        get_current_user,
+    ),
+    db: Session = Depends(
+        get_db
+    ),
+):
+    return (
+        readiness_service.get_all_roadmap_readiness(
+            db,
+            current_user.id,
+        )
+    )

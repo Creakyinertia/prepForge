@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from core.database import get_db
 from features.topics.schema import (
     CreateTopicRequest,
+    UpdateTopicRequest,
     TopicResponse,
 )
 from dependencies.admin import get_current_admin
@@ -65,3 +66,30 @@ def get_topic(
         )
 
     return topic
+
+@router.put(
+    "/{topic_id}",
+    response_model=TopicResponse,
+    dependencies=[
+        Depends(get_current_admin)
+    ],
+)
+def update_topic(
+    topic_id: UUID,
+    payload: UpdateTopicRequest,
+    db: Session = Depends(get_db),
+):
+    try:
+        return topic_service.update_topic(
+            db,
+            topic_id,
+            payload.title,
+            payload.description,
+            payload.content,
+        )
+
+    except ValueError:
+        raise HTTPException(
+            status_code=404,
+            detail="Topic not found",
+        )

@@ -19,7 +19,8 @@ from models.topic import Topic
 from models.topic_progress import (
     TopicProgress,
 )
-
+from models.roadmap import Roadmap
+from models.roadmap_topic import RoadmapTopic
 
 class ReadinessService:
 
@@ -133,3 +134,148 @@ class ReadinessService:
             score += 10
 
         return round(score, 2)
+    
+    def get_roadmap_readiness(
+        self,
+        db: Session,
+        user_id: UUID,
+        roadmap_id: UUID,
+    ):
+        roadmap = db.get(
+            Roadmap,
+            roadmap_id,
+        )
+
+        if not roadmap:
+            raise ValueError(
+                "Roadmap not found"
+            )
+
+        roadmap_topics = (
+            db.query(
+                RoadmapTopic,
+            )
+            .filter(
+                RoadmapTopic.roadmap_id
+                == roadmap_id
+            )
+            .all()
+        )
+
+        topic_ids = [
+            rt.topic_id
+            for rt in roadmap_topics
+        ]
+
+        total_topics = len(
+            topic_ids
+        )
+
+        if not topic_ids:
+            return {
+                "roadmap_id": roadmap.id,
+                "roadmap_title": roadmap.title,
+                "total_topics": 0,
+                "completed_topics": 0,
+                "readiness_score": 0,
+            }
+
+        completed_topics = (
+            db.query(
+                TopicProgress,
+            )
+            .filter(
+                TopicProgress.user_id
+                == user_id,
+                TopicProgress.topic_id.in_(
+                    topic_ids
+                ),
+                TopicProgress.status
+                == TopicProgressStatus.COMPLETED,
+            )
+            .count()
+        )
+
+        total_questions = (
+            db.query(
+                Question,
+            )
+            .filter(
+                Question.topic_id.in_(
+                    topic_ids
+                )
+            )
+            .count()
+        )
+
+        mastered_questions = (
+            db.query(
+                QuestionProgress,
+            )
+            .join(
+                Question,
+                Question.id
+                == QuestionProgress.question_id,
+            )
+            .filter(
+                QuestionProgress.user_id
+                == user_id,
+                QuestionProgress.status
+                == QuestionStatus.MASTERED,
+                Question.topic_id.in_(
+                    topic_ids
+                ),
+            )
+            .count()
+        )
+
+        completion_score = (
+            completed_topics
+            / total_topics
+        ) * 50
+
+        question_score = 0
+
+        if total_questions:
+            question_score = (
+                mastered_questions
+                / total_questions
+            ) * 50
+
+        readiness_score = round(
+            completion_score
+            + question_score,
+            2,
+        )
+
+        return {
+            "roadmap_id": roadmap.id,
+            "roadmap_title": roadmap.title,
+            "total_topics": total_topics,
+            "completed_topics": completed_topics,
+            "readiness_score": readiness_score,
+        }
+
+    def get_all_roadmap_readiness(
+        self,
+        db: Session,
+        user_id: UUID,
+    ):
+        roadmaps = (
+            db.query(
+                Roadmap
+            )
+            .order_by(
+                Roadmap.title
+            )
+            .all()
+        )
+    
+        return [
+            self.get_roadmap_readiness(
+                db,
+                user_id,
+                roadmap.id,
+            )
+            for roadmap in roadmaps
+        ]

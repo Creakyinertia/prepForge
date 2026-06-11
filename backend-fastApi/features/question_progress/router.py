@@ -14,7 +14,7 @@ from dependencies.auth import (
 
 from models.user import User
 
-from features.question_progress.schemas import (
+from features.question_progress.schema import (
     UpdateQuestionProgressRequest,
     QuestionProgressResponse,
 )

@@ -6,10 +6,14 @@ from features.roadmaps.schema import (
     CreateRoadmapRequest,
     RoadmapResponse,
 )
-from features.roadmaps.schema import AddTopicToRoadmapRequest
+from features.roadmaps.schema import AddTopicToRoadmapRequest, RoadmapProgressResponse
 from features.roadmaps.service import (
     RoadmapService,
 )
+from dependencies.auth import (
+    get_current_user,
+)
+from models.user import User
 
 router = APIRouter()
 
@@ -76,4 +80,35 @@ def add_topic_to_roadmap(
         roadmap_id,
         payload.topic_id,
         payload.order_index,
+    )
+
+@router.get(
+    "/{roadmap_id}/progress",
+    response_model=RoadmapProgressResponse,
+)
+def get_roadmap_progress(
+    roadmap_id: UUID,
+    current_user: User = Depends(
+        get_current_user,
+    ),
+    db: Session = Depends(get_db),
+):
+    return roadmap_service.get_roadmap_progress(
+        db,
+        roadmap_id,
+        current_user.id,
+    )
+
+@router.get(
+    "/progress/all",
+)
+def get_all_roadmap_progress(
+    current_user: User = Depends(
+        get_current_user,
+    ),
+    db: Session = Depends(get_db),
+):
+    return roadmap_service.get_all_roadmap_progress(
+        db,
+        current_user.id,
     )

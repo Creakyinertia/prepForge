@@ -16,6 +16,12 @@ from features.revisions.router import (
 from features.notes.router import (
     router as note_router,
 )
+from features.dashboard.router import (
+    router as dashboard_router,
+)
+from features.resources.router import (
+    router as resource_router,
+)
 
 app = FastAPI(
     title="PrepForge API",
@@ -51,6 +57,16 @@ app.include_router(
     note_router,
     prefix="/notes",
     tags=["Notes"],
+)
+app.include_router(
+    dashboard_router,
+    prefix="/dashboard",
+    tags=["Dashboard"],
+)
+app.include_router(
+    resource_router,
+    prefix="/resources",
+    tags=["Resources"],
 )
 
 @app.get("/health")

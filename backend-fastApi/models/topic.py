@@ -41,3 +41,8 @@ class Topic(Base, TimestampMixin, UUIDMixin, SoftDeleteMixin):
         back_populates="topic",
         cascade="all, delete-orphan",
     )
+    resources = relationship(
+        "Resource",
+        back_populates="topic",
+        cascade="all, delete-orphan",
+    )

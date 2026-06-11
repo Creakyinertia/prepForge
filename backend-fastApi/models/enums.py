@@ -1,6 +1,5 @@
 from enum import Enum
 
-
 class TopicProgressStatus(
     str,
     Enum,
@@ -8,3 +7,12 @@ class TopicProgressStatus(
     NOT_STARTED = "NOT_STARTED"
     IN_PROGRESS = "IN_PROGRESS"
     COMPLETED = "COMPLETED"
+
+class ResourceType(
+    str,
+    Enum,
+):
+    ARTICLE = "ARTICLE"
+    VIDEO = "VIDEO"
+    DOCUMENTATION = "DOCUMENTATION"
+    OTHER = "OTHER"

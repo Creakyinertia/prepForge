@@ -24,3 +24,12 @@ class AddTopicToRoadmapRequest(
 ):
     topic_id: UUID
     order_index: int
+
+class RoadmapProgressResponse(
+    BaseModel
+):
+    roadmap_id: UUID
+    roadmap_title: str
+    total_topics: int
+    completed_topics: int
+    progress_percentage: float

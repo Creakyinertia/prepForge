@@ -53,3 +53,8 @@ class Question(
         "Topic",
         back_populates="questions",
     )
+    progress = relationship(
+        "QuestionProgress",
+        back_populates="question",
+        cascade="all, delete-orphan",
+    )

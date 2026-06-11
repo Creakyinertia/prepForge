@@ -15,6 +15,7 @@ from models.revision import Revision
 from models.note import Note
 from models.resource import Resource
 from models.question import Question
+from models.question_progress import QuestionProgress
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

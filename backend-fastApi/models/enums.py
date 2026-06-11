@@ -24,3 +24,11 @@ class QuestionDifficulty(
     EASY = "EASY"
     MEDIUM = "MEDIUM"
     HARD = "HARD"
+
+class QuestionStatus(
+    str,
+    Enum,
+):
+    NOT_ATTEMPTED = "NOT_ATTEMPTED"
+    ATTEMPTED = "ATTEMPTED"
+    MASTERED = "MASTERED"

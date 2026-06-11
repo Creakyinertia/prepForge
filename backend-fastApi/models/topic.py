@@ -46,3 +46,8 @@ class Topic(Base, TimestampMixin, UUIDMixin, SoftDeleteMixin):
         back_populates="topic",
         cascade="all, delete-orphan",
     )
+    questions = relationship(
+        "Question",
+        back_populates="topic",
+        cascade="all, delete-orphan",
+    )

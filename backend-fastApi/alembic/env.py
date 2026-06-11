@@ -14,6 +14,7 @@ from models.roadmap_topic import RoadmapTopic
 from models.revision import Revision
 from models.note import Note
 from models.resource import Resource
+from models.question import Question
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

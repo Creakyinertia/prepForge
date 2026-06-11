@@ -16,3 +16,11 @@ class ResourceType(
     VIDEO = "VIDEO"
     DOCUMENTATION = "DOCUMENTATION"
     OTHER = "OTHER"
+
+class QuestionDifficulty(
+    str,
+    Enum,
+):
+    EASY = "EASY"
+    MEDIUM = "MEDIUM"
+    HARD = "HARD"

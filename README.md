@@ -1,233 +1,383 @@
 # PrepForge
 
-PrepForge is an Interview Preparation SaaS built to help software engineers prepare for technical interviews through structured learning, roadmap-based progression, topic tracking, revision scheduling, and future AI-assisted coaching.
+PrepForge is an Interview Preparation SaaS designed to help engineers learn, revise, track progress, and measure interview readiness through structured roadmaps and topic-centric learning.
 
-This project is being developed as a production-oriented full-stack application with a strong focus on scalable backend architecture, clean code practices, and real-world engineering patterns.
+The project is being built as a production-oriented full-stack application to demonstrate backend architecture, system design, scalable APIs, and frontend engineering practices.
 
 ---
 
 ## Vision
 
-Most interview preparation platforms focus on content delivery.
+Most interview preparation platforms focus on content.
 
-PrepForge focuses on:
+PrepForge focuses on **Interview Readiness**.
 
-* Structured learning paths
-* Topic-centric progress tracking
-* Revision and retention
-* Personalized interview preparation
-* Future AI-assisted coaching
+The goal is not simply to read topics, but to help users:
 
-The goal is to help engineers not only learn concepts but also retain them and prepare effectively for interviews.
-
----
-
-## Current Features
-
-### Authentication
-
-* User Registration
-* User Login
-* JWT Access Tokens
-* Refresh Tokens
-* Refresh Token Rotation
-* Logout
-* Current User Endpoint (`/auth/me`)
-
-### Roadmaps
-
-* Create Roadmap
-* List Roadmaps
-* Get Roadmap by ID
-
-### Topics
-
-* Create Topic
-* List Topics
-* Get Topic by ID
-
-### Roadmap Topic Mapping
-
-* Attach Topics to Roadmaps
-* Ordered Roadmap Structure
-* Many-to-Many Relationship Support
-
-### Progress Tracking
-
-* Track Topic Progress
-* Update Progress Status
-* Status Types:
-
-  * NOT_STARTED
-  * IN_PROGRESS
-  * COMPLETED
+* Learn concepts
+* Track progress
+* Revise effectively
+* Practice interview questions
+* Measure readiness
+* Identify weak areas
+* Build a personalized preparation workflow
 
 ---
 
-## Planned Features
+## Core Philosophy
 
-### Revision Scheduler
+PrepForge is built around a **Topic-Centric Architecture**.
 
-* Spaced Repetition
-* Due Revision Tracking
-* Revision History
+Everything revolves around Topics.
 
-### Notes
+Example:
 
-* Topic-specific Notes
-* Personal Knowledge Base
+JavaScript
+└── Event Loop
 
-### Resources
+React
+└── Reconciliation
 
-* Curated Learning Resources
-* External References
+System Design
+└── Load Balancing
 
-### Question Bank
+A Topic can contain:
 
+* Learning Content
+* Resources
 * Interview Questions
-* Categorized by Topic
-
-### AI Coach
-
-* Interview Guidance
-* Personalized Recommendations
-* Learning Assistance
-
-### Mock Interviews
-
-* Technical Mock Sessions
-* Feedback Generation
-
-### Community Features
-
-* Shared Learning Paths
-* Collaboration
-* Discussion
+* Personal Notes
+* Progress Tracking
+* Revision Tracking
+* Readiness Metrics
 
 ---
 
-## Architecture
+## Tech Stack
 
 ### Backend
 
 * FastAPI
 * PostgreSQL
-* SQLAlchemy
+* SQLAlchemy 2.0
 * Alembic
+* JWT Authentication
+* Refresh Token Sessions
+* Pydantic
 
-### Authentication
+### Frontend (Planned)
 
-* JWT Access Tokens
-* Refresh Tokens
-* Token Rotation Strategy
-* Password Hashing with pwdlib (Argon2)
+* Next.js (App Router)
+* TypeScript
+* Tailwind CSS
+* React Query
+* Feature-Based Architecture
 
-### Architecture Style
+---
 
-Feature-Based Architecture with Service Layer.
+## Architecture
+
+### Backend Structure
 
 ```text
-backend/
-
-├── core/
-├── dependencies/
-├── models/
-│
-├── features/
-│   ├── auth/
-│   ├── roadmaps/
-│   ├── topics/
-│   └── progress/
-│
-├── migrations/
-└── main.py
+features/
+├── auth/
+├── roadmaps/
+├── topics/
+├── resources/
+├── questions/
+├── bookmarks/
+├── notes/
+├── progress/
+├── question_progress/
+├── revisions/
+├── dashboard/
+├── readiness/
+├── search/
+├── home/
 ```
 
-### Design Principles
+### Architectural Principles
 
-* Separation of Concerns
+* Feature-Based Architecture
 * Service Layer Pattern
-* Scalable Domain Modeling
+* Business Logic Separated from Routes
 * UUID Primary Keys
-* PostgreSQL First
-* Future AI Integration Ready
+* PostgreSQL First Design
+* Scalable Domain Modeling
+* Production-Oriented API Design
 
 ---
 
-## Current Domain Model
+## Authentication
+
+Implemented:
+
+* User Registration
+* User Login
+* Access Tokens
+* Refresh Tokens
+* Refresh Token Hashing
+* Refresh Token Persistence
+* JWT Authentication
+* Protected Routes
+* Admin Authorization
+
+Security decisions:
+
+* Refresh tokens stored hashed in database
+* JWT access tokens remain stateless
+* Separate refresh token sessions
+* Role-based admin access
+
+---
+
+## Content Domain
+
+Content is platform-managed.
+
+Regular users can consume content but cannot create or modify it.
+
+### Roadmaps
+
+Examples:
+
+* JavaScript Roadmap
+* React Roadmap
+* System Design Roadmap
+
+### Topics
+
+Examples:
+
+* Event Loop
+* Closures
+* React Reconciliation
+
+Each topic contains:
+
+* Title
+* Slug
+* Description
+* Markdown Content
+
+### Resources
+
+Supported resource types:
+
+* Article
+* Documentation
+* Video
+* Other
+
+### Questions
+
+Interview questions are attached to topics.
+
+Question metadata:
+
+* Title
+* Answer
+* Difficulty
+
+---
+
+## Learning Domain
+
+### Topic Progress
+
+Tracks learning status per topic.
+
+Statuses:
+
+* Not Started
+* In Progress
+* Completed
+
+### Question Progress
+
+Tracks interview question mastery.
+
+Statuses:
+
+* Not Attempted
+* Attempted
+* Mastered
+
+### Notes
+
+Users can maintain personal topic notes.
+
+Relationship:
 
 ```text
 User
-│
-├── Progress
-│
-Roadmap
-│
-├── RoadmapTopic
-│
-Topic
+ └── Topic
+      └── Note
 ```
 
-### Roadmap Structure
+### Bookmarks
+
+Users can save topics for later review.
+
+### Revisions
+
+Spaced repetition inspired revision scheduling.
+
+Current revision flow:
 
 ```text
-Roadmap
-    ↕
-RoadmapTopic
-    ↕
-Topic
+Topic Completed
+        ↓
+Revision Scheduled
+        ↓
+Revision Completed
+        ↓
+Next Revision Scheduled
 ```
-
-A Topic can belong to multiple Roadmaps without duplication.
 
 ---
 
-## Progress Tracking
+## Analytics & Insights
 
-```text
-User
-    ↕
-TopicProgress
-    ↕
-Topic
+### Dashboard
+
+Aggregated metrics:
+
+* Completed Topics
+* Topics In Progress
+* Due Revisions
+* Notes Count
+* Roadmap Activity
+
+### Topic Readiness
+
+Measures readiness at topic level.
+
+Factors:
+
+* Topic Completion
+* Question Mastery
+* Revision Status
+
+### Roadmap Progress
+
+Tracks completion percentage across roadmap topics.
+
+### Roadmap Readiness
+
+Aggregates readiness across an entire roadmap.
+
+Example:
+
+```json
+{
+  "roadmap": "JavaScript",
+  "readiness_score": 82
+}
 ```
-
-Each user has a unique progress state for every topic.
 
 ---
 
-## Development Goals
+## Search
 
-This project is intentionally designed to demonstrate:
+Implemented:
 
-* Backend Engineering
-* Frontend Engineering
-* System Design
+```http
+GET /search/topics?q=event
+```
+
+Supports topic discovery and navigation.
+
+Future versions may leverage PostgreSQL Full Text Search.
+
+---
+
+## Home Experience
+
+Personalized home dashboard includes:
+
+* Continue Learning
+* Due Revisions
+* Recent Bookmarks
+* Readiness Metrics
+
+---
+
+## Testing
+
+Implemented:
+
+* API Tests
+* Service Layer Tests
+* Custom Exceptions
+* Error Handling
+
+Focus:
+
+* Reliability
+* Maintainability
+* Production Readiness
+
+---
+
+## Current Status
+
+Completed:
+
+* Authentication
+* Refresh Token Sessions
+* Roadmaps
+* Topics
+* Topic Content
+* Resources
+* Questions
+* Notes
+* Bookmarks
+* Topic Progress
+* Question Progress
+* Revision Scheduling
+* Dashboard APIs
+* Topic Readiness
+* Roadmap Progress
+* Roadmap Readiness
+* Search
+* Home APIs
+* Testing
+* Admin Authorization
+
+---
+
+## Planned Features
+
+### Near Term
+
+* Admin Content Management
+* Recently Viewed Topics
+* Soft Deletes
+* Frontend Application
+
+### Future
+
+* AI Coach
+* Mock Interviews
+* Quiz Generation
+* Interview Readiness Recommendations
+* Community Features
+* Learning Analytics
+
+---
+
+## Project Goal
+
+PrepForge is intentionally designed as a flagship portfolio project demonstrating:
+
+* Backend Architecture
+* Domain Modeling
+* System Design Thinking
 * API Design
-* Database Design
-* Scalable Architecture
-* Full-Stack Development
+* Authentication & Security
+* Scalable PostgreSQL Design
+* Full-Stack Engineering Practices
 
-The focus is on building software using patterns commonly found in production systems rather than tutorial-style CRUD applications.
-
----
-
-## Status
-
-🚧 Active Development
-
-Current Phase:
-
-* Authentication ✅
-* Roadmaps ✅
-* Topics ✅
-* Progress Tracking ✅
-* Revision Scheduler ✅
-* Notes 🚧
-* AI Coach ⏳
-
----
-
-## Author
-
-Built as a long-term engineering portfolio project focused on modern full-stack architecture and interview preparation tooling.
+The long-term goal is to evolve PrepForge into a complete Interview Readiness Platform rather than a simple content management system.

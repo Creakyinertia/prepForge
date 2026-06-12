@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response, Cookie
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 from core.database import get_db
@@ -7,7 +7,6 @@ from core.exceptions import (
     to_http_exception,
 )
 from dependencies.auth import get_current_user
-
 from features.auth.schema import (
     RegisterRequest,
     LoginRequest,
@@ -50,16 +49,38 @@ def register(
 )
 def login(
     payload: LoginRequest,
+    response: Response,
     db: Session = Depends(get_db),
 ):
     try:
-        return auth_service.login(
+        result = auth_service.login(
             db,
             payload.email,
             payload.password,
         )
+
+        response.set_cookie(
+            key="refresh_token",
+            value=result["refresh_token"],
+            httponly=True,
+            secure=settings.ENV == "production",
+            samesite="lax",
+            max_age=(
+                settings.REFRESH_TOKEN_EXPIRE_DAYS
+                * 24
+                * 60
+                * 60
+            ),
+        )
+
+        return {
+            "access_token": result["access_token"],
+            "token_type": result["token_type"],
+        }
+
     except AppError as exc:
         raise to_http_exception(exc) from exc
+
 #only for testing with swagger, will be removed later
 @router.post("/token")
 def token_login(
@@ -80,25 +101,61 @@ def token_login(
     response_model=TokenResponse,
 )
 def refresh(
-    payload: RefreshTokenRequest,
+    response: Response,
+    refresh_token: str | None = Cookie(
+        default=None
+    ),
     db: Session = Depends(get_db),
 ):
     try:
-        return auth_service.refresh_access_token(
-            db,
-            payload.refresh_token,
+        if not refresh_token:
+            raise InvalidRefreshTokenError()
+
+        result = (
+            auth_service.refresh_access_token(
+                db,
+                refresh_token,
+            )
         )
+
+        response.set_cookie(
+            key="refresh_token",
+            value=result["refresh_token"],
+            httponly=True,
+            secure=settings.ENV == "production",
+            samesite="lax",
+            max_age=(
+                settings.REFRESH_TOKEN_EXPIRE_DAYS
+                * 24
+                * 60
+                * 60
+            ),
+        )
+
+        return {
+            "access_token": result["access_token"],
+            "token_type": result["token_type"],
+        }
+
     except AppError as exc:
         raise to_http_exception(exc) from exc
 
 @router.post("/logout")
 def logout(
-    payload: LogoutRequest,
+    response: Response,
+    refresh_token: str | None = Cookie(
+        default=None
+    ),
     db: Session = Depends(get_db),
 ):
-    auth_service.logout(
-        db,
-        payload.refresh_token,
+    if refresh_token:
+        auth_service.logout(
+            db,
+            refresh_token,
+        )
+
+    response.delete_cookie(
+        "refresh_token"
     )
 
     return {

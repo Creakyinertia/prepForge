@@ -1,24 +1,14 @@
 "use client";
 
+import { AuthProvider } from "./AuthProvider";
 import { QueryProvider } from "./QueryProvider";
 import { ThemeProvider } from "./ThemeProvider";
 
-type Props = {
-  children: React.ReactNode;
-};
-
-export function Providers({
-  children,
-}: Props) {
+export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-    >
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <QueryProvider>
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </QueryProvider>
     </ThemeProvider>
   );

@@ -9,7 +9,7 @@ from core.exceptions import (
     AuthenticationError,
     InvalidRefreshTokenError,
     UserAlreadyExistsError,
-)
+)s
 from models.refresh_token import RefreshToken
 
 class AuthService:
@@ -150,7 +150,7 @@ class AuthService:
         return {
             "access_token": access_token,
             "refresh_token": refresh_token,
-            "token_type": "bearer"
+            "token_type": "bearer",
         }
     
     def logout(

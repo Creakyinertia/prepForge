@@ -1,23 +1,16 @@
 from sqlalchemy import String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from models.base import Base, TimestampMixin, UUIDMixin, SoftDeleteMixin
+
+from models.base import Base, SoftDeleteMixin, TimestampMixin, UUIDMixin
+
 
 class Topic(Base, TimestampMixin, UUIDMixin, SoftDeleteMixin):
     __tablename__ = "topics"
-    title: Mapped[str]=mapped_column(
-        String(255),
-        nullable=False
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    slug: Mapped[str] = mapped_column(
+        String(255), index=True, nullable=False, unique=True
     )
-    slug: Mapped[str]=mapped_column(
-        String(255),
-        index=True,
-        nullable=False,
-        unique=True
-    )
-    description: Mapped[str | None]=mapped_column(
-        Text,
-        nullable=True
-    )
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
     content: Mapped[str | None] = mapped_column(
         Text,
         nullable=True,
@@ -27,7 +20,7 @@ class Topic(Base, TimestampMixin, UUIDMixin, SoftDeleteMixin):
         "RoadmapTopic",
         back_populates="topic",
         cascade="all, delete-orphan",
-        lazy="selectin"
+        lazy="selectin",
     )
 
     progress = relationship(
@@ -57,6 +50,11 @@ class Topic(Base, TimestampMixin, UUIDMixin, SoftDeleteMixin):
     )
     bookmarked_by = relationship(
         "BookmarkedTopic",
+        back_populates="topic",
+        cascade="all, delete-orphan",
+    )
+    sections = relationship(
+        "SectionTopic",
         back_populates="topic",
         cascade="all, delete-orphan",
     )

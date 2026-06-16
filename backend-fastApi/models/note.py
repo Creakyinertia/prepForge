@@ -1,11 +1,14 @@
 from uuid import UUID
+
 from sqlalchemy import ForeignKey, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from models.base import (
     Base,
-    UUIDMixin,
     TimestampMixin,
+    UUIDMixin,
 )
+
 
 class Note(
     Base,

@@ -1,0 +1,71 @@
+{
+  "title": "React Interview Roadmap",
+  "description": "Master React concepts commonly asked in frontend interviews.",
+  "sections": [
+    {
+      "title": "React Fundamentals",
+      "topics": [
+        "What is React",
+        "JSX",
+        "Components",
+        "Props",
+        "State",
+        "Component Lifecycle",
+        "Virtual DOM",
+        "Reconciliation"
+      ]
+    },
+    {
+      "title": "Hooks",
+      "topics": [
+        "useState",
+        "useEffect",
+        "useRef",
+        "useMemo",
+        "useCallback",
+        "Custom Hooks"
+      ]
+    },
+    {
+      "title": "State Management",
+      "topics": [
+        "Context API",
+        "Redux Fundamentals",
+        "Redux Toolkit",
+        "Zustand"
+      ]
+    },
+    {
+      "title": "Performance",
+      "topics": [
+        "React.memo",
+        "Memoization",
+        "Code Splitting",
+        "Lazy Loading",
+        "Render Optimization"
+      ]
+    },
+    {
+      "title": "Advanced React",
+      "topics": [
+        "Controlled Components",
+        "Uncontrolled Components",
+        "Error Boundaries",
+        "Higher Order Components",
+        "Render Props",
+        "Portals"
+      ]
+    },
+    {
+      "title": "React Interview Topics",
+      "topics": [
+        "React vs Angular",
+        "React vs Vue",
+        "Keys in React",
+        "Synthetic Events",
+        "Strict Mode",
+        "Concurrent Rendering"
+      ]
+    }
+  ]
+}

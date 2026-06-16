@@ -1,22 +1,23 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
 
 from alembic import context
 from models.base import Base
-from models.user import User
-from models.refresh_token import RefreshToken
-from models.roadmap import Roadmap
-from models.topic_progress import TopicProgress
-from models.topic import Topic
-from models.roadmap_topic import RoadmapTopic
-from models.revision import Revision
-from models.note import Note
-from models.resource import Resource
-from models.question import Question
-from models.question_progress import QuestionProgress
-from models.bookmarked_topic import BookmarkedTopic
+from models.bookmarked_topic import BookmarkedTopic  # noqa: F401
+from models.note import Note  # noqa: F401
+from models.question import Question  # noqa: F401
+from models.question_progress import QuestionProgress  # noqa: F401
+from models.refresh_token import RefreshToken  # noqa: F401
+from models.resource import Resource  # noqa: F401
+from models.revision import Revision  # noqa: F401
+from models.roadmap import Roadmap  # noqa: F401
+from models.roadmap_section import RoadmapSection  # noqa: F401
+from models.roadmap_topic import RoadmapTopic  # noqa: F401
+from models.section_topic import SectionTopic  # noqa: F401
+from models.topic import Topic  # noqa: F401
+from models.topic_progress import TopicProgress  # noqa: F401
+from models.user import User  # noqa: F401
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -77,9 +78,7 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()

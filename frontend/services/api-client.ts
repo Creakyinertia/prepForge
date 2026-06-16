@@ -27,10 +27,11 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config;
 
     const isUnauthorized = error.response?.status === 401;
+    const isRefreshRequest = originalRequest.url?.includes("/auth/refresh");
 
     const isRetry = originalRequest._retry;
 
-    if (isUnauthorized && !isRetry) {
+    if (isUnauthorized && !isRetry && !isRefreshRequest) {
       originalRequest._retry = true;
 
       try {

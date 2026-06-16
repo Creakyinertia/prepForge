@@ -20,12 +20,12 @@ export async function getMe() {
   return response.data;
 }
 
+export async function logout() {
+  await apiClient.post("/auth/logout");
+}
+
 export async function refreshToken() {
   const response = await apiClient.post<LoginResponse>("/auth/refresh");
 
   return response.data;
-}
-
-export async function logout() {
-  await apiClient.post("/auth/logout");
 }

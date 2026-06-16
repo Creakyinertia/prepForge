@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import models
 from features.auth.router import router as auth_router
 from features.roadmaps.router import (
@@ -44,6 +45,17 @@ from features.home.router import (
 app = FastAPI(
     title="PrepForge API",
     version="1.0.0",
+)
+origins = [
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.include_router(

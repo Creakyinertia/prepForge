@@ -9,7 +9,7 @@ from core.exceptions import (
     AuthenticationError,
     InvalidRefreshTokenError,
     UserAlreadyExistsError,
-)s
+)
 from models.refresh_token import RefreshToken
 
 class AuthService:

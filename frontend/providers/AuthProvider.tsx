@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 
-import { getMe, logout as logoutApi } from "@/features/auth/api";
+import { getMe, logout as logoutApi, refreshToken } from "@/features/auth/api";
 
 import { getAccessToken, removeAccessToken, setAccessToken } from "@/features/auth/auth-storage";
 
@@ -44,7 +44,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       setUser(user);
     } catch {
-      removeAccessToken();
+      try {
+        const refreshResponse = await refreshToken();
+
+        setAccessToken(refreshResponse.access_token);
+
+        const user = await getMe();
+
+        setUser(user);
+      } catch {
+        removeAccessToken();
+
+        setUser(null);
+      }
     } finally {
       setIsLoading(false);
     }

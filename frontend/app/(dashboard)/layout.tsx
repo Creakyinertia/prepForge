@@ -1,15 +1,11 @@
 import { AppShell } from "@/components/layout/AppShell";
 
-type Props = {
-  children: React.ReactNode;
-};
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
-export default function DashboardLayout({
-  children,
-}: Props) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <AppShell>
-      {children}
-    </AppShell>
+    <ProtectedRoute>
+      <AppShell>{children}</AppShell>
+    </ProtectedRoute>
   );
 }

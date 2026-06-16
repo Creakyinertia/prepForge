@@ -2,28 +2,23 @@ from fastapi import APIRouter, Depends, Response, Cookie
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 from core.database import get_db
-from core.exceptions import (
-    AppError,
-    to_http_exception,
-)
+from core.exceptions import AppError, to_http_exception, InvalidRefreshTokenError
 from dependencies.auth import get_current_user
 from features.auth.schema import (
     RegisterRequest,
     LoginRequest,
     RefreshTokenRequest,
-    LogoutRequest,
     TokenResponse,
     UserResponse,
 )
 from features.auth.service import AuthService
-
+from core.config import settings
 from models.user import User
 
-router = APIRouter(
-    tags=["Auth"]
-)
+router = APIRouter(tags=["Auth"])
 
 auth_service = AuthService()
+
 
 @router.post(
     "/register",
@@ -42,6 +37,7 @@ def register(
         )
     except AppError as exc:
         raise to_http_exception(exc) from exc
+
 
 @router.post(
     "/login",
@@ -63,14 +59,9 @@ def login(
             key="refresh_token",
             value=result["refresh_token"],
             httponly=True,
-            secure=settings.ENV == "production",
+            secure=False,
             samesite="lax",
-            max_age=(
-                settings.REFRESH_TOKEN_EXPIRE_DAYS
-                * 24
-                * 60
-                * 60
-            ),
+            max_age=(settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60),
         )
 
         return {
@@ -81,20 +72,19 @@ def login(
     except AppError as exc:
         raise to_http_exception(exc) from exc
 
-#only for testing with swagger, will be removed later
+
+# only for testing with swagger, will be removed later
 @router.post("/token")
 def token_login(
-    form_data: OAuth2PasswordRequestForm = Depends(),
-    db: Session = Depends(get_db)
+    form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
 ):
     try:
         return auth_service.login(
-            db=db,
-            email=form_data.username,
-            password=form_data.password
+            db=db, email=form_data.username, password=form_data.password
         )
     except AppError as exc:
         raise to_http_exception(exc) from exc
+
 
 @router.post(
     "/refresh",
@@ -102,34 +92,25 @@ def token_login(
 )
 def refresh(
     response: Response,
-    refresh_token: str | None = Cookie(
-        default=None
-    ),
+    refresh_token: str | None = Cookie(default=None),
     db: Session = Depends(get_db),
 ):
     try:
         if not refresh_token:
             raise InvalidRefreshTokenError()
 
-        result = (
-            auth_service.refresh_access_token(
-                db,
-                refresh_token,
-            )
+        result = auth_service.refresh_access_token(
+            db,
+            refresh_token,
         )
 
         response.set_cookie(
             key="refresh_token",
             value=result["refresh_token"],
             httponly=True,
-            secure=settings.ENV == "production",
+            secure=False,
             samesite="lax",
-            max_age=(
-                settings.REFRESH_TOKEN_EXPIRE_DAYS
-                * 24
-                * 60
-                * 60
-            ),
+            max_age=(settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60),
         )
 
         return {
@@ -140,12 +121,11 @@ def refresh(
     except AppError as exc:
         raise to_http_exception(exc) from exc
 
+
 @router.post("/logout")
 def logout(
     response: Response,
-    refresh_token: str | None = Cookie(
-        default=None
-    ),
+    refresh_token: str | None = Cookie(default=None),
     db: Session = Depends(get_db),
 ):
     if refresh_token:
@@ -154,21 +134,14 @@ def logout(
             refresh_token,
         )
 
-    response.delete_cookie(
-        "refresh_token"
-    )
+    response.delete_cookie("refresh_token")
 
-    return {
-        "message": "Logged out"
-    }
+    return {"message": "Logged out"}
+
 
 @router.get(
     "/me",
     response_model=UserResponse,
 )
-def me(
-    current_user: User = Depends(
-        get_current_user
-    )
-):
+def me(current_user: User = Depends(get_current_user)):
     return current_user

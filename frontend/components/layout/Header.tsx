@@ -1,4 +1,6 @@
-import { Bell, Search } from "lucide-react";
+import { Search } from "lucide-react";
+
+import { UserMenu } from "./UserMenu";
 
 export function Header() {
   return (
@@ -27,42 +29,20 @@ export function Header() {
           />
 
           <input
-            placeholder="Search topics, roadmaps..."
+            placeholder="Search topics..."
             className="
               h-10
               w-full
               rounded-xl
               border
-              bg-background
               pl-10
               pr-4
               text-sm
-              outline-none
-              transition-all
-              focus:ring-2
-              focus:ring-blue-500
             "
           />
         </div>
 
-        <div className="flex items-center gap-3">
-          <button
-            className="
-              flex
-              h-10
-              w-10
-              items-center
-              justify-center
-              rounded-xl
-              transition-colors
-              hover:bg-muted
-            "
-          >
-            <Bell className="h-5 w-5" />
-          </button>
-
-          <div className="h-9 w-9 rounded-full bg-slate-300" />
-        </div>
+        <UserMenu />
       </div>
     </header>
   );

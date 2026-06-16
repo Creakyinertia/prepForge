@@ -1,5 +1,6 @@
 import re
 
+
 def generate_slug(title: str) -> str:
     slug = title.lower()
 
